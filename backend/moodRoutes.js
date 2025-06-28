@@ -9,7 +9,7 @@ import {
   orderBy,
   getDocs,
 } from "firebase/firestore";
-import { db } from "../src/firebase-config";  // adjust path as needed
+import { db } from "../src/firebase-config.js";  // adjust path as needed
 
 const router = express.Router();
 
