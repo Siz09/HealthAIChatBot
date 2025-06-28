@@ -1,0 +1,431 @@
+/* Mood Tracker Styles */
+.mood-tracker {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .mood-tracker.dark {
+    color: #f3f4f6;
+  }
+  
+  .mood-tracker.light {
+    color: #1f2937;
+  }
+  
+  /* Mood Picker Styles */
+  .mood-picker {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+  }
+  
+  .mood-picker.dark {
+    background: #374151;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+  
+  .mood-picker-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .mood-picker-title.dark {
+    color: #f9fafb;
+  }
+  
+  .mood-picker-title.light {
+    color: #1f2937;
+  }
+  
+  .mood-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .mood-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    flex: 1;
+    min-width: 80px;
+    position: relative;
+  }
+  
+  .mood-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .mood-option.light {
+    background: #f8fafc;
+  }
+  
+  .mood-option.light:hover {
+    background: #e2e8f0;
+  }
+  
+  .mood-option.dark {
+    background: #4b5563;
+  }
+  
+  .mood-option.dark:hover {
+    background: #6b7280;
+  }
+  
+  .mood-option.selected {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+  }
+  
+  .mood-option.selected.light {
+    background: #dbeafe;
+  }
+  
+  .mood-option.selected.dark {
+    background: #1e40af;
+  }
+  
+  .mood-emoji {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    user-select: none;
+  }
+  
+  .mood-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  .mood-label.light {
+    color: #4b5563;
+  }
+  
+  .mood-label.dark {
+    color: #d1d5db;
+  }
+  
+  .mood-note {
+    margin-bottom: 1.5rem;
+  }
+  
+  .mood-note-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .mood-note-label.light {
+    color: #374151;
+  }
+  
+  .mood-note-label.dark {
+    color: #d1d5db;
+  }
+  
+  .mood-note-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+  }
+  
+  .mood-note-textarea.light {
+    background: white;
+    color: #1f2937;
+    border-color: #d1d5db;
+  }
+  
+  .mood-note-textarea.light:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .mood-note-textarea.dark {
+    background: #4b5563;
+    color: #f9fafb;
+    border-color: #6b7280;
+  }
+  
+  .mood-note-textarea.dark:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+  
+  .mood-submit-btn {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .mood-submit-btn.light {
+    background: #3b82f6;
+    color: white;
+  }
+  
+  .mood-submit-btn.light:hover:not(:disabled) {
+    background: #2563eb;
+  }
+  
+  .mood-submit-btn.dark {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .mood-submit-btn.dark:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  
+  .mood-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Already Submitted Message */
+  .already-submitted {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .already-submitted.light {
+    background: #f0f9ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+  }
+  
+  .already-submitted.dark {
+    background: #1e3a8a;
+    color: #bfdbfe;
+    border: 1px solid #3b82f6;
+  }
+  
+  /* Mood History Styles */
+  .mood-history {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mood-history.dark {
+    background: #374151;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+  
+  .mood-history-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .mood-history-title.dark {
+    color: #f9fafb;
+  }
+  
+  .mood-history-title.light {
+    color: #1f2937;
+  }
+  
+  .mood-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .mood-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .mood-entry.light {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .mood-entry.dark {
+    background: #4b5563;
+    border: 1px solid #6b7280;
+  }
+  
+  .mood-entry:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mood-entry-emoji {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .mood-entry-content {
+    flex: 1;
+  }
+  
+  .mood-entry-date {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  .mood-entry-date.light {
+    color: #1f2937;
+  }
+  
+  .mood-entry-date.dark {
+    color: #f9fafb;
+  }
+  
+  .mood-entry-note {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+  
+  .mood-entry-note.light {
+    color: #6b7280;
+  }
+  
+  .mood-entry-note.dark {
+    color: #d1d5db;
+  }
+  
+  .no-entries {
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+  }
+  
+  .no-entries.light {
+    color: #6b7280;
+  }
+  
+  .no-entries.dark {
+    color: #9ca3af;
+  }
+  
+  /* Loading and Error States */
+  .loading,
+  .error {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .loading.light {
+    background: #f0f9ff;
+    color: #1e40af;
+  }
+  
+  .loading.dark {
+    background: #1e3a8a;
+    color: #bfdbfe;
+  }
+  
+  .error.light {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+  
+  .error.dark {
+    background: #7f1d1d;
+    color: #fca5a5;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 640px) {
+    .mood-tracker {
+      padding: 0.5rem;
+    }
+  
+    .mood-picker,
+    .mood-history {
+      padding: 1rem;
+    }
+  
+    .mood-options {
+      gap: 0.25rem;
+    }
+  
+    .mood-option {
+      padding: 0.75rem 0.5rem;
+      min-width: 60px;
+    }
+  
+    .mood-emoji {
+      font-size: 1.5rem;
+    }
+  
+    .mood-label {
+      font-size: 0.625rem;
+    }
+  
+    .mood-entry {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .mood-entry-emoji {
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  

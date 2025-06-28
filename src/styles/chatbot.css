@@ -29,6 +29,61 @@
     color: #ffffff;
   }
   
+  /* Main Content - Horizontal Split Layout */
+  .main-content {
+    display: flex;
+    height: 100vh;
+    gap: 1rem;
+  }
+  
+  /* Left side: MoodTracker takes half screen */
+  .left-panel {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    border-right: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    scrollbar-width: thin;
+    scrollbar-color: #bfdbfe transparent;
+  }
+  
+  .left-panel.light {
+    background-color: #f9fafb;
+    border-right-color: #e5e7eb;
+  }
+  
+  .left-panel.dark {
+    background-color: #1f2937;
+    border-right-color: #374151;
+  }
+  
+  .left-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .left-panel::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .left-panel::-webkit-scrollbar-thumb {
+    background: #bfdbfe;
+    border-radius: 3px;
+  }
+  
+  /* Right side: Chat takes half screen */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  /* Ensure chat-main expands and chat-footer stays at bottom */
+  .chat-main {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
   /* Header */
   .chat-header {
     padding: 1rem 1.5rem;
@@ -574,6 +629,25 @@
   }
   
   /* Responsive Design */
+  @media (max-width: 768px) {
+    .main-content {
+      flex-direction: column;
+      height: auto;
+    }
+    
+    .left-panel,
+    .right-panel {
+      flex: none;
+      height: auto;
+      border-right: none;
+    }
+
+    .left-panel {
+      border-bottom: 1px solid #e5e7eb;
+      max-height: 50vh;
+    }
+  }
+  
   @media (max-width: 640px) {
     .chat-header {
       padding: 0.75rem 1rem;
@@ -594,5 +668,55 @@
     .message-content {
       max-width: calc(100vw - 4rem);
     }
+
+    .left-panel {
+      padding: 0.5rem;
+    }
+  }
+  
+  /* Mood Tracker Styles */
+  .mood-tracker {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .mood-tracker-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .mood-picker-section,
+  .mood-history-section {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mood-picker-section {
+    flex: 0 0 auto;
+  }
+
+  .mood-history-section {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Dark mode support for mood tracker */
+  .chat-container.dark .mood-tracker-title {
+    color: #f9fafb;
+  }
+
+  .chat-container.dark .mood-picker-section,
+  .chat-container.dark .mood-history-section {
+    background: #374151;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   }
   
