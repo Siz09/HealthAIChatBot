@@ -101,17 +101,12 @@ export function ChatProvider({ children }) {
   
         setIsTyping(true);
   
-        // src/chat-context.js or wherever you're making the fetch call
-
+        // Call your backend API to get AI response
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: text.trim() }),
         });
-        
-        const { reply } = await response.json();
-        
-
   
         const data = await response.json();
   
@@ -138,6 +133,7 @@ export function ChatProvider({ children }) {
     },
     [user]
   );
+  
   
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
