@@ -12,27 +12,27 @@ import { db, auth, signInAnon, onAuthStateChanged } from "../firebase-config";
 
 const ChatContext = createContext();
 
-const getBotResponse = (text) => {
-  const lowerText = text.toLowerCase();
+// const getBotResponse = (text) => {
+//   const lowerText = text.toLowerCase();
 
-  if (lowerText.includes("sad") || lowerText.includes("depressed")) {
-    return "I'm really sorry to hear that. Want to talk about what's been bothering you?";
-  }
-  if (lowerText.includes("anxious") || lowerText.includes("anxiety")) {
-    return "Anxiety can feel overwhelming. Try taking a deep breath. Would you like a calming technique?";
-  }
-  if (lowerText.includes("stressed") || lowerText.includes("pressure")) {
-    return "Stress is tough. Want to try a quick breathing exercise or hear a motivational quote?";
-  }
-  if (lowerText.includes("happy") || lowerText.includes("good")) {
-    return "That's great to hear! I'm always here when you need support.";
-  }
-  if (lowerText.includes("help") || lowerText.includes("support")) {
-    return "You're not alone. I'm here for you. Would you like some tips or resources?";
-  }
+//   if (lowerText.includes("sad") || lowerText.includes("depressed")) {
+//     return "I'm really sorry to hear that. Want to talk about what's been bothering you?";
+//   }
+//   if (lowerText.includes("anxious") || lowerText.includes("anxiety")) {
+//     return "Anxiety can feel overwhelming. Try taking a deep breath. Would you like a calming technique?";
+//   }
+//   if (lowerText.includes("stressed") || lowerText.includes("pressure")) {
+//     return "Stress is tough. Want to try a quick breathing exercise or hear a motivational quote?";
+//   }
+//   if (lowerText.includes("happy") || lowerText.includes("good")) {
+//     return "That's great to hear! I'm always here when you need support.";
+//   }
+//   if (lowerText.includes("help") || lowerText.includes("support")) {
+//     return "You're not alone. I'm here for you. Would you like some tips or resources?";
+//   }
 
-  return "Thank you for sharing. I'm here to support you. Would you like to continue?";
-};
+//   return "Thank you for sharing. I'm here to support you. Would you like to continue?";
+// };
 
 export function ChatProvider({ children }) {
   const [user, setUser] = useState(null);

@@ -55,7 +55,7 @@ export default function MoodHistory() {
 
     // Cleanup listener on component unmount
     return () => unsubscribe()
-  }, [db]) // only attach once (and when db ref changes)
+  }, []) // only attach once (and when db ref changes)
 
   const formatDateTime = (date) => {
     if (!date || !(date instanceof Date)) return "Unknown date"
