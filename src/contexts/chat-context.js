@@ -103,14 +103,14 @@ export function ChatProvider({ children }) {
   
         // src/chat-context.js or wherever you're making the fetch call
 
-        const response = await fetch(
-          `${process.env.REACT_APP_API_BASE || ""}/api/chat`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text.trim() }),
-          }
-        );
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text.trim() }),
+        });
+        
+        const { reply } = await response.json();
+        
 
   
         const data = await response.json();
