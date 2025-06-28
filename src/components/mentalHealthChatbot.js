@@ -311,30 +311,18 @@ export default function EnhancedMentalHealthChatbot() {
                       exit="exit"
                       className={`enhanced-message-wrapper ${message.sender}`}
                     >
-                      <div className="message-content">
-                        <motion.div
-                          className={`enhanced-message-bubble ${message.sender} ${themeClass}`}
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {message.sender === "bot" && (
-                            <div className="bot-avatar">
-                              <MessageCircle size={16} />
-                            </div>
-                          )}
-                          <div className="message-text-container">
-                            <p className="message-text">{message.text}</p>
-                            <p className={`message-timestamp ${message.sender} ${themeClass}`}>
-                              {formatRelativeTime(message.timestamp)}
-                            </p>
-                          </div>
-                          {message.sender === "user" && (
-                            <div className="user-avatar">
-                              <div className="avatar-circle"></div>
-                            </div>
-                          )}
-                        </motion.div>
-                      </div>
+                      <motion.div
+                        className={`enhanced-message-bubble ${message.sender} ${themeClass}`}
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="message-text-container">
+                          <p className="message-text">{message.text}</p>
+                          <p className={`message-timestamp ${message.sender} ${themeClass}`}>
+                            {formatRelativeTime(message.timestamp)}
+                          </p>
+                        </div>
+                      </motion.div>
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -348,31 +336,26 @@ export default function EnhancedMentalHealthChatbot() {
                       exit={{ opacity: 0, y: -20 }}
                       className="enhanced-typing-indicator"
                     >
-                      <div className="typing-content">
-                        <div className={`enhanced-typing-bubble ${themeClass}`}>
-                          <div className="bot-avatar">
-                            <MessageCircle size={16} />
+                      <div className={`enhanced-typing-bubble ${themeClass}`}>
+                        <div className="typing-animation">
+                          <div className="typing-dots">
+                            <motion.div 
+                              className={`typing-dot ${themeClass}`}
+                              animate={{ scale: [0.8, 1, 0.8], opacity: [0.5, 1, 0.5] }}
+                              transition={{ duration: 1.4, repeat: Infinity, delay: 0 }}
+                            />
+                            <motion.div 
+                              className={`typing-dot ${themeClass}`}
+                              animate={{ scale: [0.8, 1, 0.8], opacity: [0.5, 1, 0.5] }}
+                              transition={{ duration: 1.4, repeat: Infinity, delay: 0.2 }}
+                            />
+                            <motion.div 
+                              className={`typing-dot ${themeClass}`}
+                              animate={{ scale: [0.8, 1, 0.8], opacity: [0.5, 1, 0.5] }}
+                              transition={{ duration: 1.4, repeat: Infinity, delay: 0.4 }}
+                            />
                           </div>
-                          <div className="typing-animation">
-                            <div className="typing-dots">
-                              <motion.div 
-                                className={`typing-dot ${themeClass}`}
-                                animate={{ scale: [1, 1.2, 1] }}
-                                transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                              />
-                              <motion.div 
-                                className={`typing-dot ${themeClass}`}
-                                animate={{ scale: [1, 1.2, 1] }}
-                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                              />
-                              <motion.div 
-                                className={`typing-dot ${themeClass}`}
-                                animate={{ scale: [1, 1.2, 1] }}
-                                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                              />
-                            </div>
-                            <span className={`typing-text ${themeClass}`}>MindEase is thinking...</span>
-                          </div>
+                          <span className={`typing-text ${themeClass}`}>MindEase is thinking...</span>
                         </div>
                       </div>
                     </motion.div>
