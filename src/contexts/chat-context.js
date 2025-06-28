@@ -101,12 +101,17 @@ export function ChatProvider({ children }) {
   
         setIsTyping(true);
   
-        // Call your backend API to get AI response
-        const response = await fetch("http://localhost:4000/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text.trim() }),
-        });
+        // src/chat-context.js or wherever you're making the fetch call
+
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE || ""}/api/chat`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text.trim() }),
+          }
+        );
+
   
         const data = await response.json();
   
