@@ -1,17 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore"
-import { db, auth } from "../firebase-config"
+import { useChat } from "../contexts/chat-context"
 
 export default function MoodHistory() {
+  const { anonymousId } = useChat()
   const [moodEntries, setMoodEntries] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (!auth?.currentUser || !db) {
-      setError("Authentication or database not available.")
+    if (!anonymousId) {
+      setError("User session not available.")
       setIsLoading(false)
       return
     }
@@ -19,43 +19,34 @@ export default function MoodHistory() {
     setIsLoading(true)
     setError(null)
 
-    // Create query for mood logs filtered by current user, ordered by timestamp desc
-    const moodLogsRef = collection(db, "mood_logs")
-    const q = query(moodLogsRef, where("userId", "==", auth.currentUser.uid), orderBy("timestamp", "desc"))
-
-    // Set up real-time listener
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        try {
-          const entries = querySnapshot.docs.map((doc) => {
-            const data = doc.data()
-            return {
-              id: doc.id,
-              ...data,
-              // Convert Firestore timestamp to JavaScript Date
-              timestamp: data.timestamp?.toDate() || new Date(),
-            }
-          })
-
-          setMoodEntries(entries)
-          setIsLoading(false)
-        } catch (error) {
-          console.error("Error processing mood entries:", error)
-          setError("Failed to process mood entries.")
-          setIsLoading(false)
+    // Fetch mood history from Spring Boot backend
+    const fetchMoodHistory = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/mood/history/${anonymousId}`);
+        if (response.ok) {
+          const moodHistory = await response.json();
+          const formattedEntries = moodHistory.map(entry => ({
+            id: entry.id.toString(),
+            mood: entry.mood,
+            moodEmoji: entry.moodEmoji,
+            moodLabel: entry.moodLabel,
+            note: entry.note,
+            timestamp: new Date(entry.timestamp)
+          }));
+          setMoodEntries(formattedEntries);
+        } else {
+          setError("Failed to load mood history.");
         }
-      },
-      (error) => {
-        console.error("Error fetching mood history:", error)
-        setError("Failed to load mood history. Please try again.")
+      } catch (error) {
+        console.error("Error fetching mood history:", error);
+        setError("Failed to load mood history. Please try again.");
+      } finally {
         setIsLoading(false)
-      },
-    )
+      }
+    };
 
-    // Cleanup listener on component unmount
-    return () => unsubscribe()
-  }, []) // only attach once (and when db ref changes)
+    fetchMoodHistory();
+  }, [anonymousId])
 
   const formatDateTime = (date) => {
     if (!date || !(date instanceof Date)) return "Unknown date"

@@ -1,6 +1,6 @@
 # MindEase - Student Mental Health Chatbot
 
-A supportive AI-powered mental health chatbot designed specifically for students, featuring mood tracking, real-time chat support, and a beautiful, responsive interface.
+A supportive AI-powered mental health chatbot designed specifically for students, featuring mood tracking, chat support, and a beautiful, responsive interface built with React frontend and Spring Boot backend.
 
 ## Features
 
@@ -8,9 +8,8 @@ A supportive AI-powered mental health chatbot designed specifically for students
 - 📊 **Mood Tracking**: Log and track your daily mood with notes and history
 - 🌙 **Dark/Light Mode**: Comfortable viewing in any lighting condition
 - 📱 **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- 🔄 **Real-time Updates**: Live chat and mood data synchronization
-- 🔐 **Anonymous Authentication**: No personal data required, uses Firebase anonymous auth
-- 💾 **Persistent Storage**: Chat history and mood logs saved securely in Firebase
+- 💾 **Persistent Storage**: Chat history and mood logs saved securely in MySQL database
+- 🔐 **Anonymous Sessions**: No personal data required, uses anonymous session management
 
 ## Tech Stack
 
@@ -21,14 +20,14 @@ A supportive AI-powered mental health chatbot designed specifically for students
 - **CSS3** - Custom styling with modern design principles
 
 ### Backend
-- **Node.js & Express** - API server
+- **Spring Boot** - Java-based REST API server
+- **MySQL** - Relational database for data persistence
+- **JPA/Hibernate** - Object-relational mapping
 - **OpenAI API** - AI chat responses
-- **Firebase Firestore** - Real-time database
-- **Firebase Auth** - Anonymous authentication
 
 ### Deployment
-- **Firebase Hosting** - Frontend deployment
-- **GitHub Actions** - CI/CD pipeline
+- **Frontend**: Can be deployed to Netlify, Vercel, or any static hosting
+- **Backend**: Can be deployed to Heroku, AWS, or any Java hosting platform
 
 ## Prerequisites
 
@@ -36,8 +35,10 @@ Before running this project, make sure you have:
 
 - **Node.js** (version 16 or higher)
 - **npm** or **yarn** package manager
+- **Java 17** or higher
+- **Maven** (for building the Spring Boot application)
+- **MySQL** (version 8.0 or higher)
 - **OpenAI API Key** - Get one from [OpenAI Platform](https://platform.openai.com/api-keys)
-- **Firebase Project** - Set up at [Firebase Console](https://console.firebase.google.com/)
 
 ## Installation & Setup
 
@@ -48,81 +49,77 @@ git clone <your-repository-url>
 cd student-mental-health-chatbot
 ```
 
-### 2. Install Dependencies
+### 2. Database Setup
 
-```bash
-# Install frontend dependencies
-npm install
+Create a MySQL database:
 
-# Install backend dependencies
-cd backend
-npm install
-cd ..
+```sql
+CREATE DATABASE mindease_db;
 ```
 
-### 3. Environment Configuration
+### 3. Backend Setup
 
-Create a `.env` file in the `backend` directory:
+Navigate to the Spring Boot backend directory and set up environment variables:
 
 ```bash
-cd backend
-touch .env
+cd backend-springboot
+cp .env.example .env
 ```
 
-Add your OpenAI API key to `backend/.env`:
+Edit the `.env` file with your configuration:
 
 ```env
+DB_USERNAME=your_mysql_username
+DB_PASSWORD=your_mysql_password
 OPENAI_API_KEY=your_openai_api_key_here
-PORT=4000
+JWT_SECRET=your_jwt_secret_key_here
 ```
 
-### 4. Firebase Configuration
+Build and run the Spring Boot application:
 
-The Firebase configuration is already set up in `src/firebase-config.js`. If you want to use your own Firebase project:
+```bash
+# Build the application
+mvn clean install
 
-1. Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Firestore Database
-3. Enable Authentication with Anonymous sign-in
-4. Replace the config in `src/firebase-config.js` with your project's config
-
-### 5. Firestore Security Rules
-
-Set up these security rules in your Firebase Console under Firestore Database > Rules:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Allow authenticated users to read/write their own chat messages
-    match /chats/{document} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
-    }
-    
-    // Allow authenticated users to read/write their own mood logs
-    match /mood_logs/{document} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
-    }
-  }
-}
+# Run the application
+mvn spring-boot:run
 ```
+
+The backend will run on `http://localhost:8080`
+
+### 4. Frontend Setup
+
+In a new terminal, navigate back to the root directory and install frontend dependencies:
+
+```bash
+cd ..
+npm install
+```
+
+Start the React development server:
+
+```bash
+npm start
+```
+
+The frontend will run on `http://localhost:3000`
 
 ## Running the Application
 
 ### Development Mode
 
-You need to run both the frontend and backend servers:
+You need to run both the Spring Boot backend and React frontend:
 
-#### Terminal 1 - Start Backend Server
+#### Terminal 1 - Start Spring Boot Backend
 ```bash
-cd backend
-npm start
+cd backend-springboot
+mvn spring-boot:run
 ```
-The backend will run on `http://localhost:4000`
+The backend will run on `http://localhost:8080`
 
-#### Terminal 2 - Start Frontend Development Server
+#### Terminal 2 - Start React Frontend
 ```bash
+cd ..
 npm start
 ```
 The frontend will run on `http://localhost:3000`
@@ -130,11 +127,13 @@ The frontend will run on `http://localhost:3000`
 ### Production Build
 
 ```bash
-# Build the frontend for production
-npm run build
+# Build the Spring Boot backend
+cd backend-springboot
+mvn clean package
 
-# The build files will be in the 'build' directory
-# Deploy these files to your hosting service
+# Build the frontend for production
+cd ..
+npm run build
 ```
 
 ## Project Structure
@@ -156,32 +155,38 @@ student-mental-health-chatbot/
 │   ├── utils/                 # Utility functions
 │   │   ├── date.js                  # Date formatting utilities
 │   │   └── data-utils.js            # Data manipulation utilities
-│   ├── firebase-config.js     # Firebase configuration
 │   ├── App.js                 # Main App component
 │   └── index.js              # React entry point
-├── backend/                   # Express.js backend
-│   ├── server.js             # Main server file
-│   ├── moodRoutes.js         # Mood tracking API routes
-│   └── package.json          # Backend dependencies
-├── api/                      # Serverless functions (alternative)
-│   └── chat.js              # OpenAI chat endpoint
-├── .github/workflows/        # GitHub Actions CI/CD
-└── firebase.json            # Firebase hosting config
+├── backend-springboot/        # Spring Boot backend
+│   ├── src/main/java/com/mindease/
+│   │   ├── entity/           # JPA entities
+│   │   ├── repository/       # Data repositories
+│   │   ├── service/          # Business logic
+│   │   ├── controller/       # REST controllers
+│   │   ├── dto/              # Data transfer objects
+│   │   └── config/           # Configuration classes
+│   ├── src/main/resources/
+│   │   └── application.yml   # Spring Boot configuration
+│   └── pom.xml              # Maven dependencies
+└── package.json             # Frontend dependencies
 ```
 
 ## API Endpoints
 
 ### Chat API
 - **POST** `/api/chat`
-  - Body: `{ "message": "user message" }`
-  - Response: `{ "reply": "AI response" }`
+  - Body: `{ "message": "user message", "anonymousId": "user_id" }`
+  - Response: `{ "reply": "AI response", "messageId": "message_id" }`
+
+- **GET** `/api/chat/history/{anonymousId}`
+  - Response: Array of chat message objects
 
 ### Mood Tracking API
 - **POST** `/api/mood`
-  - Body: `{ "userId": "string", "mood": "string", "note": "string", "emoji": "string" }`
-  - Response: `{ "message": "Mood logged", "id": "document_id" }`
+  - Body: `{ "anonymousId": "string", "mood": "string", "moodEmoji": "string", "moodLabel": "string", "note": "string" }`
+  - Response: Mood log object with ID and timestamp
 
-- **GET** `/api/mood/:userId`
+- **GET** `/api/mood/history/{anonymousId}`
   - Response: Array of mood log objects
 
 ## Features Guide
@@ -190,7 +195,7 @@ student-mental-health-chatbot/
 - Type messages in the input field at the bottom
 - Press Enter or click the send button to send messages
 - The AI responds with supportive, empathetic messages
-- Chat history is automatically saved and persists across sessions
+- Chat history is saved to the database and persists across sessions
 
 ### Mood Tracking
 1. Click on the "Mood" tab in the sidebar
@@ -211,29 +216,36 @@ student-mental-health-chatbot/
 
 ### Common Issues
 
-#### 1. Proxy Error: Could not proxy request /api/chat
-**Problem**: The backend server isn't running
-**Solution**: Make sure to start the backend server first:
+#### 1. Connection refused to localhost:8080
+**Problem**: The Spring Boot backend server isn't running
+**Solution**: Make sure to start the Spring Boot server first:
 ```bash
-cd backend
-npm start
+cd backend-springboot
+mvn spring-boot:run
 ```
 
-#### 2. OpenAI API Key Error
+#### 2. Database connection error
+**Problem**: MySQL database is not running or credentials are incorrect
+**Solution**: 
+- Make sure MySQL is running on your system
+- Check the database credentials in `backend-springboot/.env`
+- Ensure the database `mindease_db` exists
+
+#### 3. OpenAI API Key Error
 **Problem**: Missing or invalid OpenAI API key
 **Solution**: 
-- Check that `OPENAI_API_KEY` is set in `backend/.env`
+- Check that `OPENAI_API_KEY` is set in `backend-springboot/.env`
 - Verify your API key is valid and has sufficient credits
 - Ensure there are no extra spaces or quotes around the key
 
-#### 3. Firebase Connection Issues
-**Problem**: Authentication or database errors
+#### 4. Maven Build Errors
+**Problem**: Spring Boot application fails to build
 **Solution**:
-- Verify Firebase configuration in `src/firebase-config.js`
-- Check that Firestore and Authentication are enabled in Firebase Console
-- Ensure security rules are properly configured
+- Ensure Java 17 or higher is installed
+- Check that Maven is properly installed
+- Run `mvn clean install` to rebuild dependencies
 
-#### 4. Build Errors
+#### 5. Frontend Build Errors
 **Problem**: npm run build fails
 **Solution**:
 - Clear node_modules and reinstall: `rm -rf node_modules package-lock.json && npm install`
@@ -244,34 +256,36 @@ npm start
 
 1. **Optimize Images**: Use WebP format for better compression
 2. **Code Splitting**: The app already uses React's lazy loading
-3. **Caching**: Firebase automatically handles caching for better performance
+3. **Database Indexing**: Add indexes to frequently queried columns in MySQL
 4. **Bundle Analysis**: Run `npm run build` and check the bundle size
 
 ## Deployment
 
-### Firebase Hosting (Recommended)
+### Frontend Deployment
 
-1. Install Firebase CLI:
-```bash
-npm install -g firebase-tools
-```
+#### Netlify (Recommended)
+1. Build the frontend: `npm run build`
+2. Deploy the `build` folder to Netlify
+3. Set up environment variables if needed
 
-2. Login to Firebase:
-```bash
-firebase login
-```
+#### Vercel
+1. Connect your GitHub repository to Vercel
+2. Vercel will automatically detect it's a React app
+3. Set build command to `npm run build`
 
-3. Build and deploy:
-```bash
-npm run build
-firebase deploy
-```
+### Backend Deployment
 
-### Alternative Deployment Options
+#### Heroku
+1. Create a Heroku app
+2. Add MySQL addon (JawsDB or ClearDB)
+3. Set environment variables in Heroku dashboard
+4. Deploy the Spring Boot application
 
-- **Netlify**: Connect your GitHub repository for automatic deployments
-- **Vercel**: Similar to Netlify with excellent React support
-- **GitHub Pages**: For static hosting (frontend only)
+#### AWS/DigitalOcean
+1. Set up a server with Java 17+
+2. Install MySQL
+3. Build the application: `mvn clean package`
+4. Run the JAR file: `java -jar target/mental-health-chatbot-0.0.1-SNAPSHOT.jar`
 
 ## Contributing
 
@@ -285,8 +299,9 @@ firebase deploy
 ## Security Considerations
 
 - API keys are stored securely in environment variables
-- Firebase security rules prevent unauthorized data access
-- Anonymous authentication protects user privacy
+- Database access is controlled through JPA repositories
+- Anonymous session management protects user privacy
+- CORS is properly configured for cross-origin requests
 - All data is encrypted in transit and at rest
 
 ## License
@@ -298,14 +313,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 If you encounter any issues or have questions:
 
 1. Check the troubleshooting section above
-2. Review the [Firebase documentation](https://firebase.google.com/docs)
+2. Review the [Spring Boot documentation](https://spring.io/projects/spring-boot)
 3. Check [OpenAI API documentation](https://platform.openai.com/docs)
-4. Create an issue in the GitHub repository
+4. Review [MySQL documentation](https://dev.mysql.com/doc/)
+5. Create an issue in the GitHub repository
 
 ## Acknowledgments
 
 - OpenAI for providing the GPT API
-- Firebase for backend infrastructure
+- Spring Boot team for the excellent framework
+- MySQL for reliable database management
 - React team for the amazing framework
 - Framer Motion for smooth animations
 - Lucide for beautiful icons

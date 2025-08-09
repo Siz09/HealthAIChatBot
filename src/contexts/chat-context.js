@@ -1,123 +1,89 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  serverTimestamp,
-  where,
-} from "firebase/firestore";
-import { db, auth, signInAnon, onAuthStateChanged } from "../firebase-config";
 
 const ChatContext = createContext();
 
-// const getBotResponse = (text) => {
-//   const lowerText = text.toLowerCase();
-
-//   if (lowerText.includes("sad") || lowerText.includes("depressed")) {
-//     return "I'm really sorry to hear that. Want to talk about what's been bothering you?";
-//   }
-//   if (lowerText.includes("anxious") || lowerText.includes("anxiety")) {
-//     return "Anxiety can feel overwhelming. Try taking a deep breath. Would you like a calming technique?";
-//   }
-//   if (lowerText.includes("stressed") || lowerText.includes("pressure")) {
-//     return "Stress is tough. Want to try a quick breathing exercise or hear a motivational quote?";
-//   }
-//   if (lowerText.includes("happy") || lowerText.includes("good")) {
-//     return "That's great to hear! I'm always here when you need support.";
-//   }
-//   if (lowerText.includes("help") || lowerText.includes("support")) {
-//     return "You're not alone. I'm here for you. Would you like some tips or resources?";
-//   }
-
-//   return "Thank you for sharing. I'm here to support you. Would you like to continue?";
-// };
+// Generate anonymous user ID
+const generateAnonymousId = () => {
+  let anonymousId = localStorage.getItem('anonymousId');
+  if (!anonymousId) {
+    anonymousId = 'anon_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+    localStorage.setItem('anonymousId', anonymousId);
+  }
+  return anonymousId;
+};
 
 export function ChatProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [anonymousId] = useState(generateAnonymousId());
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Anonymous sign-in and auth state listener
+  // Load chat history on component mount
   useEffect(() => {
-    signInAnon();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
+    const loadChatHistory = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/chat/history/${anonymousId}`);
+        if (response.ok) {
+          const chatHistory = await response.json();
+          const formattedMessages = chatHistory.map(msg => ({
+            id: msg.id.toString(),
+            text: msg.text,
+            sender: msg.sender.toLowerCase(),
+            timestamp: new Date(msg.createdAt)
+          }));
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error('Failed to load chat history:', error);
       }
-    });
-    return () => unsubscribe();
-  }, []);
+    };
 
-  // Real-time message fetch for this user
-  useEffect(() => {
-    if (!user) return;
-
-    const q = query(
-      collection(db, "chats"),
-      where("userId", "==", user.uid),
-      orderBy("timestamp", "asc")
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const msgs = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          timestamp: doc.data().timestamp?.toDate() || new Date(),
-        }));
-        setMessages(msgs);
-      },
-      (err) => {
-        setError("Failed to load messages");
-        console.error(err);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [user]);
+    loadChatHistory();
+  }, [anonymousId]);
 
   // Send user message and bot response
   const sendMessage = useCallback(
     async (text) => {
-      if (!user || !text.trim()) return;
+      if (!text.trim()) return;
   
       try {
         setIsLoading(true);
         setError(null);
-  
-        // Save user message to Firestore
-        await addDoc(collection(db, "chats"), {
+
+        // Add user message to local state immediately
+        const userMessage = {
+          id: Date.now().toString(),
           text: text.trim(),
           sender: "user",
-          userId: user.uid,
-          timestamp: serverTimestamp(),
-        });
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, userMessage]);
   
         setIsTyping(true);
   
-        // Call your backend API to get AI response
-        const response = await fetch("/api/chat", {
+        // Call Spring Boot backend API
+        const response = await fetch("http://localhost:8080/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text.trim() }),
+          body: JSON.stringify({ 
+            message: text.trim(),
+            anonymousId: anonymousId
+          }),
         });
   
         const data = await response.json();
   
         if (response.ok) {
-          // Save AI reply to Firestore
-          await addDoc(collection(db, "chats"), {
+          // Add bot message to local state
+          const botMessage = {
+            id: data.messageId || (Date.now() + 1).toString(),
             text: data.reply,
             sender: "bot",
-            userId: user.uid,
-            timestamp: serverTimestamp(),
-          });
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, botMessage]);
         } else {
           setError(data.error || "Failed to get response from AI");
         }
@@ -131,7 +97,7 @@ export function ChatProvider({ children }) {
         console.error(err);
       }
     },
-    [user]
+    [anonymousId]
   );
   
   
@@ -142,6 +108,7 @@ export function ChatProvider({ children }) {
   return (
     <ChatContext.Provider
       value={{
+        anonymousId,
         messages,
         isLoading,
         isTyping,
